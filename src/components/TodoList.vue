@@ -24,10 +24,11 @@
         />
       </div>
     </form>
+    <!-- <p>{{ results }}</p> -->
 
     <ul class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-8">
       <li
-        v-for="(todo, index) in results"
+        v-for="todo in results"
         :key="todo.id"
         class="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200"
       >
@@ -149,7 +150,7 @@
                   rounded-br-lg
                   hover:text-white hover:bg-red-500
                 "
-                @click="removeTodo(index)"
+                @click="removeTodo(todo.id)"
               >
                 <TrashIcon class="w-5 h-5 text-black-400" aria-hidden="true" />
                 <span class="ml-3">Delete</span>
@@ -170,7 +171,7 @@ import { CheckIcon, PencilIcon, TrashIcon } from "@heroicons/vue/solid";
 const todoNumber = ref(1);
 const newTodo = ref("");
 const todos = db.collection("tasks");
-const results = ref({});
+const results = ref([]);
 
 export default {
   components: {
@@ -208,7 +209,8 @@ export default {
     onMounted(async () => {
       const snapshot = await db.collection("tasks").get();
       snapshot.forEach((doc) => {
-        results.value = doc.data();
+        results.value.push(doc.data());
+        // console.log(results.value);
         return results.value;
       });
     });
@@ -218,11 +220,18 @@ export default {
       // console.log(todo.done);
     }
 
-    function removeTodo(index) {
-      // console.log(this.todos[index].done);
-      if (this.todos[index].done === true) {
-        todos.value.splice(index, 1);
-      }
+    async function removeTodo(index) {
+      // if (results.value[index].done === true) {
+      const snapshot = await db.collection("tasks").get();
+      snapshot.forEach((doc) => {
+        results.value.map((item) => {
+          if (index === doc.data().id) {
+            console.log("hello", item);
+            db.collection("tasks").doc(doc.id).delete();
+          }
+        });
+      });
+      // }
     }
 
     return {
