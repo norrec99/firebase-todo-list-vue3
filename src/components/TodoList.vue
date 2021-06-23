@@ -164,7 +164,7 @@
 
 <script>
 import { db } from "../firebase";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { CheckIcon, PencilIcon, TrashIcon } from "@heroicons/vue/solid";
 
 const todoNumber = ref(1);
@@ -197,13 +197,21 @@ export default {
         newTodo.value = "";
       }
     }
-    const snapshot = await db.collection("tasks").get();
-    snapshot.forEach((doc) => {
-      results.value = doc.data();
-      return results.value;
+    // const snapshot = await db.collection("tasks").get();
+    // snapshot.forEach((doc) => {
+    //   results.value = doc.data();
+    //   return results.value;
+    // });
+    // console.log(results.value);
+    // console.log(todos);
+
+    onMounted(async () => {
+      const snapshot = await db.collection("tasks").get();
+      snapshot.forEach((doc) => {
+        results.value = doc.data();
+        return results.value;
+      });
     });
-    console.log(results.value);
-    console.log(todos);
 
     function toggleDone(todo) {
       todo.done = !todo.done;
