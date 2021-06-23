@@ -198,13 +198,6 @@ export default {
         newTodo.value = "";
       }
     }
-    // const snapshot = await db.collection("tasks").get();
-    // snapshot.forEach((doc) => {
-    //   results.value = doc.data();
-    //   return results.value;
-    // });
-    // console.log(results.value);
-    // console.log(todos);
 
     onMounted(async () => {
       const snapshot = await db.collection("tasks").get();
@@ -221,17 +214,16 @@ export default {
     }
 
     async function removeTodo(index) {
-      // if (results.value[index].done === true) {
+      // console.log(index);
       const snapshot = await db.collection("tasks").get();
       snapshot.forEach((doc) => {
         results.value.map((item) => {
-          if (index === doc.data().id) {
-            console.log("hello", item);
+          // console.log(item.done);
+          if (item.done === true && index === doc.data().id) {
             db.collection("tasks").doc(doc.id).delete();
           }
         });
       });
-      // }
     }
 
     return {
